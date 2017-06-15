@@ -28,10 +28,16 @@ function wfBible() {
 
 function renderBible($input, $argv, $parser) {
 	global $wgUser;
-	$title_text = "RationalWiki:Annotated Bible/".$argv['book'];
+	$title_text = "Project:Annotated Bible/".$argv['book'];
 	$title    = Title::newFromText($title_text);
-	$article  = new Article($title);
-	$wikitext = $article->getContent();
+	$revision = Revision::newFromTitle( $title );
+	if ( !$revision ) {
+		$wikitext = '';
+	} elseif ( is_callable( array( $revision, 'getContent' ) ) ) {
+		$wikitext = $revision->getContent()->getWikitextForTransclusion();
+	} else {
+		$wikitext = $revision->getText();
+	}
 	if(!$argv['verse2']) {
 		$argv['verse2']=$argv['verse1'];
 	}
@@ -52,39 +58,30 @@ function renderBible($input, $argv, $parser) {
 	$pattern .= preg_quote( $argv['verse2'] . "<br>", '/' );
 	$pattern .= "/i";
 
-	$wikitext = str_ireplace("==","<br>",$wikitext);
+	$wikitext = preg_replace("/==+/","<br>",$wikitext);
 	$wikitext = str_ireplace("__notoc__","",$wikitext);
 	$wikitext = str_ireplace("\n","",$wikitext);
-	
+
 	$verse2=$argv['verse2']-1;
 
-	if($verse2 == $argv['verse1']){	
+	if($verse2 == $argv['verse1']){
 		$output2 =
 			Html::element( 'a',
-				array( 'href' =>
-					Title::newFromText(
-						"RationalWiki:Annotated_Bible/".$argv['book'].
-						"#".$argv['book']."_".$argv['chapter'].":".$argv['verse1']
-					)->getFullURL()
-				),
+				$attr = array( 'href' => $title->getFullURL() . "#".$argv['book']."_".$argv['chapter'].":".$argv['verse1'] ),
 				$argv['book']." ".$argv['chapter'].":".$argv['verse1']
 			) .
 			"<br>";
-	}
-	if($verse2 != $argv['verse1']){	
+	} else {
 		$output2 =
 			Html::element( 'a',
-				array( 'href' => Title::newFromText(
-					"RationalWiki:Annotated_Bible/".$argv['book'].
-					"#".$argv['book']."_".$argv['chapter'].":".$argv['verse1']
-				)->getFullURL() ),
+				array( 'href' => $title->getFullURL() . "#".$argv['book']."_".$argv['chapter'].":".$argv['verse1'] ),
 				$argv['book']." ".$argv['chapter'].":".$argv['verse1']."-".$verse2
 			) .
 			"<br>";
-	}	
+	}
 #	preg_match("/(Genesis.*?)Genesis+/i",$wikitext,$match);
 	preg_match($pattern,$wikitext,$match);
-	$output = $match[1]; 	
+	$output = $match[1];
 #	$output = str_ireplace($argv['book'], "<br>".$argv['book'], $output);
 	$pattern="/<\/td>.*?<tr><td valign=top>/";
 	$replace="";
@@ -92,10 +89,8 @@ function renderBible($input, $argv, $parser) {
 	$pattern="/".$argv['book'].".*?<br>/";
 	$replace="";
 	$output=preg_replace($pattern,$replace,$output);
-	
+
 	$output3=$output2. $parser->recursiveTagParse( $output );
-	$output3= str_ireplace("==","",$output3);
-	$output3= str_ireplace("=","",$output3);
 	return $output3;
 }
 
