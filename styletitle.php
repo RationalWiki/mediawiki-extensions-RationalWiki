@@ -15,12 +15,15 @@ function efTitlestyle_Setup( $parser ) {
 }
  
 function efTitlestyle_Magic( &$magicWords, $langCode ) {
-        $magicWords['titlestyle'] = array( 0, 'titlestyle' );
-        return true;
+	$magicWords['titlestyle'] = array( 0, 'titlestyle' );
+	return true;
 }
  
 function efTitlestyle_Render( $parser, $text = '' ) {
-        //$parser->mOutput->setProperty('titlestyle', $parser->mOutput->getProperty('titlestyle') . htmlspecialchars(Sanitizer::checkCss($text)) );
-        $parser->mOutput->addHeadItem('<style type="text/css">/*<![CDATA[*/ .firstHeading, .pagetitle { ' . htmlspecialchars(Sanitizer::checkCss($text)) . ' } /*]]>*/</style>');
-        return '';
+	$css = Sanitizer::checkCss($text);
+	if ( strcspn( $css, '{}' ) !== strlen( $text ) ) {
+		return;
+	}
+	$parser->mOutput->addHeadItem('<style>.firstHeading, .pagetitle { ' . htmlspecialchars( $css ) . ' }</style>');
+	return '';
 }
