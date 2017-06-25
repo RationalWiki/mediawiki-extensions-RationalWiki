@@ -1,0 +1,13 @@
+{
+	"manifest_version": 1,
+	"name": "RationalWiki",
+	"type": "other",
+	"author": [
+		"[http://rationalwiki.com/wiki/User:Tmtoulouse Trent Toulouse]",
+		"[http://www.mediawiki.org/wiki/User:Nx Nx]"
+	],
+	"descriptionmsg": "rationalwiki-extension-desc",
+	"url": "https://github.com/RationalWiki/mediawiki-extensions-RationalWiki",
+	"license-name": "GPL-2.0+",
+	"MessagesDirs": {"RationalWiki": ["i18n"]}
+}

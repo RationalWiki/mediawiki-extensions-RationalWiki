@@ -1,0 +1,23 @@
+{
+	"group-vandal": "Vandals",
+	"group-vandal-member": "Vandal",
+	"grouppage-vandal": "Project:Vandals",
+	"group-irrational": "Irrational numbers",
+	"group-irrational-member": "Irrational number",
+	"grouppage-irrational": "Irrational number",
+	"group-ninja": "Ninjas",
+	"group-ninja-member": "Ninja",
+	"grouppage-ninja": "Project:Ninjas",
+	"group-tech": "Techs",
+	"group-tech-member": "Tech",
+	"grouppage-tech": "Project:Techs",
+	"group-moderator": "Moderators",
+	"group-moderator-member": "Moderator",
+	"grouppage-moderator": "Project:Moderators",
+	"protect-level-moderator": "Moderators only",
+	"right-moderator": "Edit moderator-protected pages",
+	"group-autopatrolled": "Autopatrolled",
+	"group-autopatrolled-member": "Autopatrolled",
+	"grouppage-autopatrolled": "Project:Autopatrolled",
+	"rationalwiki-extension-desc": "RationalWiki extension bundle"
+}
