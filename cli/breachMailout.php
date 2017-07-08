@@ -36,14 +36,21 @@ And the Saloon bar:
 
 EOT;
 
-		$multiMessage = "The following user names were associated with this email address:\n\n";
+		$multiMessage = "You are receiving this message because you registered accounts at\n" .
+			"RationalWiki with the usernames:\n\n";
 
+		$singleMessage = "You are receiving this message because you registered an account at\n" .
+			"RationalWiki with the username";
 
 		$dbr = wfGetDB( DB_REPLICA );
-		$res = $dbr->query( 'SELECT user_email, GROUP_CONCAT(user_name) as names ' . 
-			'FROM user where user_password_expires IS NOT NULL ' . 
+		$res = $dbr->query( 'SELECT ' .
+			'user_email, GROUP_CONCAT(user_name SEPARATOR \'|\') AS names ' .
+			'FROM user ' .
+			'WHERE user_password_expires IS NOT NULL ' .
 			'AND user_email_authenticated IS NOT NULL ' .
-			'GROUP BY user_email', __METHOD__ );
+			'GROUP BY user_email' .
+			'ORDER BY user_email',
+			__METHOD__ );
 
 		$sender = new MailAddress( 'security@rationalwiki.org', 'RationalWiki' );
 
@@ -57,13 +64,14 @@ EOT;
 				continue;
 			}
 
-			$names = explode( ',', $row->names );
+			$names = explode( "|", $row->names );
 
 			$message = $intro;
 			if ( count( $names ) > 2 ) {
 				$message .= "\n" . $multiMessage . wordwrap( implode( ", ", $names ) );
-				$name = $row->user_email;
+				$name = null;
 			} else {
+				$message .= "\n{$singleMessage} \"{$names[0]}\"\n";
 				$name = $names[0];
 			}
 
