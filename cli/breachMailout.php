@@ -56,7 +56,7 @@ EOT;
 
 		foreach ( $res as $row ) {
 			$emailParts = explode( '@', $row->user_email, 2 );
-			if ( $emailParts < 2 ) {
+			if ( count( $emailParts ) < 2 ) {
 				continue;
 			}
 			if ( substr_count( $emailParts[0], '.' ) > 5 && $emailParts[1] === 'gmail.com' ) {
