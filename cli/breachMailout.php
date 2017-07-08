@@ -42,13 +42,13 @@ EOT;
 		$singleMessage = "You are receiving this message because you registered an account at\n" .
 			"RationalWiki with the username";
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->query( 'SELECT ' .
 			'user_email, GROUP_CONCAT(user_name SEPARATOR \'|\') AS names ' .
 			'FROM user ' .
 			'WHERE user_password_expires IS NOT NULL ' .
 			'AND user_email_authenticated IS NOT NULL ' .
-			'GROUP BY user_email' .
+			'GROUP BY user_email ' .
 			'ORDER BY user_email',
 			__METHOD__ );
 
@@ -67,7 +67,7 @@ EOT;
 			$names = explode( "|", $row->names );
 
 			$message = $intro;
-			if ( count( $names ) > 2 ) {
+			if ( count( $names ) > 1 ) {
 				$message .= "\n" . $multiMessage . wordwrap( implode( ", ", $names ) );
 				$name = null;
 			} else {
