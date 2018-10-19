@@ -8,19 +8,14 @@ $wgExtensionCredits['parserhook'][] = array(
  
  
 //$wgHooks['MagicWordwgVariableIDs'][] = 'NoTitle::addMagicWordId';
-$wgHooks['LanguageGetMagic'][] = 'NoTitle::addMagicWordLanguage';
 $wgHooks['ParserBeforeTidy'][] = 'NoTitle::checkForMagicWord';
-
+$wgHooks['GetDoubleUnderscoreIDs'][] = 'NoTitle::addMagicWordId';
+$wgExtensionMessagesFiles['RationalWikiMagic'] = __DIR__ . '/notitle.i18n.magic.php';
 
 class NoTitle
 {
- 
-  static function addMagicWordLanguage(&$magicWords, $langCode) {
-    switch($langCode) {
-    default:
-      $magicWords['notitle'] = array(0, '__NOTITLE__');
-    }
-    MagicWord::$mDoubleUnderscoreIDs[] = 'notitle';
+  static function addMagicWordId(&$mDoubleUnderscoreIDs) {
+    $mDoubleUnderscoreIDs[] = 'notitle';
     return true;
   }
  
