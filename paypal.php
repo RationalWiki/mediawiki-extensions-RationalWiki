@@ -1,19 +1,22 @@
 <?php
- 
+
+namespace MediaWiki\Extension\RationalWiki;
+
 $wgExtensionCredits['parserhook'][] = array(
         'name' => 'PayPal',
         'author' => 'Trent Toulouse',
         'description' => 'Renders Donate buttons'
 );
- 
-$wgExtensionFunctions[] = 'wfPaypal';
- 
-function wfPaypal() {
-    global $wgParser;
- 
-    $wgParser->setHook('Paypal', 'renderPaypal');
+
+$wgHooks['ParserFirstCallInit'][] = 'MediaWiki\\Extension\\RationalWiki\\wfPaypal';
+
+/**
+ * @param \Parser $parser
+ */
+function wfPaypal( $parser ) {
+    $parser->setHook('Paypal', 'MediaWiki\\Extension\\RationalWiki\\renderPaypal');
 }
- 
+
 function renderPaypal($input, $argv) {
 
 $current=1570;

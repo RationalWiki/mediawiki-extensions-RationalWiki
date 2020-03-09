@@ -1,51 +1,50 @@
 <?php
 
+namespace MediaWiki\Extension\RationalWiki;
+
+use MediaWiki\MediaWikiServices;
+
 // Extension credits that show up on Special:Version
 $wgExtensionCredits['parserhook'][] = array(
-        'name' => 'Bible Generator',
-        'author' => '[http://rationalwiki.com/wiki/User:Tmtoulouse Trent Toulouse]',
-        'url' => 'http://rationalwiki.com/wiki/RationalWiki:Annotated_Bible',
-        'description' => 'Allows for easy quoting of bible verses'
+	'name' => 'Bible Generator',
+	'author' => '[http://rationalwiki.com/wiki/User:Tmtoulouse Trent Toulouse]',
+	'url' => 'http://rationalwiki.com/wiki/RationalWiki:Annotated_Bible',
+	'description' => 'Allows for easy quoting of bible verses'
 );
- 
-/*
- * @todo Document 
- */
-$wgExtensionFunctions[] = 'wfBible';
- 
-/**
- * @todo Document
- */
-function wfBible() {
-    global $wgParser;
- 
-    $wgParser->setHook('bible', 'renderBible');
-}
- 
-/**
- * @todo Document
- */
 
+$wgHooks['ParserFirstCallInit'][] = function ( \Parser $parser ) {
+	$parser->setHook('bible', 'renderBible');
+};
+
+/**
+ * @param string $input
+ * @param string[] $argv
+ * @param \Parser $parser
+ * @return string
+ */
 function renderBible($input, $argv, $parser) {
-	global $wgUser;
-	$title_text = "Project:Annotated Bible/".$argv['book'];
-	$title    = Title::newFromText($title_text);
-	$revision = Revision::newFromTitle( $title );
-	if ( !$revision ) {
-		$wikitext = '';
-	} elseif ( is_callable( array( $revision, 'getContent' ) ) ) {
-		$wikitext = $revision->getContent()->getWikitextForTransclusion();
-	} else {
-		$wikitext = $revision->getText();
+	$missingParams = array_diff( [ 'book', 'chapter', 'verse1' ], array_keys( $argv ) );
+	if ( $missingParams ) {
+		return '<span class="error">' .
+			'Missing parameter(s) in &lt;bible&gt; tag: ' .
+			implode( ', ', $missingParams ) .
+			'</span>';
 	}
-	if(!$argv['verse2']) {
+	$title_text = "Project:Annotated Bible/".$argv['book'];
+	$title    = \Title::newFromText($title_text);
+	$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
+	$revision = $revisionLookup->getRevisionByTitle( $title );
+	$content = $revision->getContent( 'main' );
+	if ( $content instanceof \WikitextContent ) {
+		$wikitext = $content->getText();
+	} else {
+		$wikitext = '';
+	}
+	if(!isset($argv['verse2'])) {
 		$argv['verse2']=$argv['verse1'];
 	}
 	$argv['verse2']=$argv['verse2']+1;
 
-	$params = array(
-        	"book", "chapter", "verse1", "verse2"
-	);
 	$pattern = "/(";
 	$pattern .= preg_quote( $argv['book'], '/' );
 	$pattern .= " ";
@@ -66,23 +65,21 @@ function renderBible($input, $argv, $parser) {
 
 	if($verse2 == $argv['verse1']){
 		$output2 =
-			Html::element( 'a',
+			\Html::element( 'a',
 				$attr = array( 'href' => $title->getFullURL() . "#".$argv['book']."_".$argv['chapter'].":".$argv['verse1'] ),
 				$argv['book']." ".$argv['chapter'].":".$argv['verse1']
 			) .
 			"<br>";
 	} else {
 		$output2 =
-			Html::element( 'a',
+			\Html::element( 'a',
 				array( 'href' => $title->getFullURL() . "#".$argv['book']."_".$argv['chapter'].":".$argv['verse1'] ),
 				$argv['book']." ".$argv['chapter'].":".$argv['verse1']."-".$verse2
 			) .
 			"<br>";
 	}
-#	preg_match("/(Genesis.*?)Genesis+/i",$wikitext,$match);
 	preg_match($pattern,$wikitext,$match);
 	$output = $match[1];
-#	$output = str_ireplace($argv['book'], "<br>".$argv['book'], $output);
 	$pattern="/<\/td>.*?<tr><td valign=top>/";
 	$replace="";
 	$output=preg_replace($pattern,$replace,$output);
