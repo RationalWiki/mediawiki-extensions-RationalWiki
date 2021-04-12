@@ -13,7 +13,7 @@ $wgExtensionCredits['parserhook'][] = array(
 );
 
 $wgHooks['ParserFirstCallInit'][] = function ( \Parser $parser ) {
-	$parser->setHook('bible', 'renderBible');
+	$parser->setHook('bible', 'MediaWiki\\Extension\\RationalWiki\\renderBible');
 };
 
 /**

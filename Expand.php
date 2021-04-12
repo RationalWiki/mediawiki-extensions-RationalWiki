@@ -20,7 +20,10 @@ function efExpand_Magic( &$magicWords, $langCode) {
  * @return bool
  */
 function wfExpand( $parser ) {
-	$parser->setFunctionHook( 'expand', 'efExpand_Render', SFH_NO_HASH);
+	$parser->setFunctionHook(
+		'expand',
+		'MediaWiki\\Extension\\RationalWiki\\efExpand_Render',
+		SFH_NO_HASH);
 	return true;
 }
 
