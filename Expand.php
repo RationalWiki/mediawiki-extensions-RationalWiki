@@ -8,12 +8,7 @@ $wgExtensionCredits['parserhook'][] = array(
 );
 
 $wgHooks['ParserFirstCallInit'][] = 'MediaWiki\\Extension\\RationalWiki\\wfExpand';
-$wgHooks['LanguageGetMagic'][] = 'MediaWiki\Extension\RationalWiki\\efExpand_Magic';
-
-function efExpand_Magic( &$magicWords, $langCode) {
-	$magicWords['expand'] = array( 0, 'expand' );
-	return true;
-}
+$wgExtensionMessagesFiles['RationalWikiExpandMagic'] = __DIR__ . '/expand.i18n.magic.php';
 
 /**
  * @param \Parser $parser

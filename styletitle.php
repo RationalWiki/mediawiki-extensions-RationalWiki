@@ -7,9 +7,9 @@ $wgExtensionCredits['parserfunction'][] = array(
 	'author' => '[http://www.mediawiki.org/wiki/User:Nx Nx]',
 	'description' => 'Allows styling the page title (.firstHeading)'
 );
+$wgExtensionMessagesFiles['StyleTitleMagic'] = __DIR__ . '/styletitle.i18n.magic.php';
 
 $wgHooks['ParserFirstCallInit'][] = 'MediaWiki\\Extension\\RationalWiki\\efTitlestyle_Setup';
-$wgHooks['LanguageGetMagic'][] = 'MediaWiki\\Extension\\RationalWiki\\efTitlestyle_Magic';
 
 /**
  * @param \Parser $parser
@@ -19,11 +19,6 @@ function efTitlestyle_Setup( $parser ) {
 	$parser->setFunctionHook( 'titlestyle',
 		'MediaWiki\\Extension\\RationalWiki\\efTitlestyle_Render',
 		SFH_NO_HASH);
-	return true;
-}
-
-function efTitlestyle_Magic( &$magicWords, $langCode ) {
-	$magicWords['titlestyle'] = array( 0, 'titlestyle' );
 	return true;
 }
 
