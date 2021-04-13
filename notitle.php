@@ -15,7 +15,7 @@ $wgExtensionMessagesFiles['RationalWikiMagic'] = __DIR__ . '/notitle.i18n.php';
 class NoTitle
 {
 
-	static function addMagicWordId( &$mDoubleUnderscoreIDs ) {
+	public static function onGetDoubleUnderscoreIDs( &$mDoubleUnderscoreIDs ) {
 		$mDoubleUnderscoreIDs[] = 'notitle';
 		return true;
 	}
@@ -25,7 +25,7 @@ class NoTitle
 	 * @param string &$text
 	 * @return bool
 	 */
-	static function checkForMagicWord($parser, &$text) {
+	public static function checkForMagicWord($parser, &$text) {
 		if ( isset( $parser->mDoubleUnderscores['notitle'] ) ) {
 			$parser->mOutput->addHeadItem('<style type="text/css">/*<![CDATA[*/ .firstHeading, .subtitle, #siteSub, #contentSub, .pagetitle { display:none; } /*]]>*/</style>');
 		}
